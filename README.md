@@ -36,4 +36,7 @@
 |LBDY| Study Day of Specimen Collection|Num |if LBDTC >= RFDTC then LBDY = LBDT-RFSTDT|
 
 # input
-[initial]()
+[initial](https://github.com/princeadeyemoboy/02.SDTM-Dataset-Development-Laboratory-/blob/main/initial.sas)
+[Program]()
+[Dataset]()
+[Log]()
