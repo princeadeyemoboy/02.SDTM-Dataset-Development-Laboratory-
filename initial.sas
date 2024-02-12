@@ -1,6 +1,4 @@
-/*Property of Clip Lab of Cytel. For use by Clip Lab students only.*/
-/*Copyright � 2014, Cytel Statistical Software & Services Pvt. Ltd.*/
-/*All Rights Reserved. Copying in any form is prohibited.*/
+
 /*--------------------------------------------------------------------------------------
 STUDY					: 
 PROGRAM					: initial.sas 
