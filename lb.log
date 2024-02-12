@@ -1,0 +1,2198 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.00 seconds
+      memory              485.78k
+      OS Memory           24224.00k
+      Timestamp           02/12/2024 11:31:02 AM
+      Step Count                        233  Switch Count  0
+      Page Faults                       0
+      Page Reclaims                     60
+2                                                          The SAS System                      Monday, February 12, 2024 12:31:02 PM
+
+      Page Swaps                        0
+      Voluntary Context Switches        4
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           8
+      
+
+168        proc sort data=rawdata.dm out=dmf1;
+NOTE: Data file RAWDATA.DM.DATA is in a format that is native to another host, or the file encoding does not match the session 
+      encoding. Cross Environment Data Access will be used, which might require additional CPU resources and might reduce 
+      performance.
+169        by usubjid;
+170        run;
+
+NOTE: There were 742 observations read from the data set RAWDATA.DM.
+NOTE: The data set WORK.DMF1 has 742 observations and 17 variables.
+NOTE: Compressing data set WORK.DMF1 decreased size by 0.00 percent. 
+      Compressed is 3 pages; un-compressed would require 3 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.00 seconds
+      memory              1868.43k
+      OS Memory           25520.00k
+      Timestamp           02/12/2024 11:31:02 AM
+      Step Count                        234  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     183
+      Page Swaps                        0
+      Voluntary Context Switches        14
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           784
+      
+
+171        
+172        ****generating usubjid for lab;
+173        data l1;
+174        set rawdata.lab;
+NOTE: Data file RAWDATA.LAB.DATA is in a format that is native to another host, or the file encoding does not match the session 
+      encoding. Cross Environment Data Access will be used, which might require additional CPU resources and might reduce 
+      performance.
+175        prot1= substr(prot, 1, 6);
+176        prot2= substr(prot, 8, 3);
+177        protx= put(prot1, 6.) || put(prot2, 3.0);
+178        run;
+
+NOTE: There were 102412 observations read from the data set RAWDATA.LAB.
+NOTE: The data set WORK.L1 has 102412 observations and 35 variables.
+NOTE: Compressing data set WORK.L1 decreased size by 49.19 percent. 
+      Compressed is 188 pages; un-compressed would require 370 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.44 seconds
+      user cpu time       0.41 seconds
+      system cpu time     0.04 seconds
+      memory              2835.12k
+      OS Memory           27044.00k
+      Timestamp           02/12/2024 11:31:03 AM
+3                                                          The SAS System                      Monday, February 12, 2024 12:31:03 PM
+
+      Step Count                        235  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     440
+      Page Swaps                        0
+      Voluntary Context Switches        15
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           48136
+      
+
+179        
+180        ****generating usubjid for lab;
+181        data lbfind;
+182        set l1;
+183        USUBJID= catx("-", protx, batch, pno);
+184        drop prot1 prot2;
+185        run;
+
+NOTE: There were 102412 observations read from the data set WORK.L1.
+NOTE: The data set WORK.LBFIND has 102412 observations and 34 variables.
+NOTE: Compressing data set WORK.LBFIND decreased size by 61.23 percent. 
+      Compressed is 195 pages; un-compressed would require 503 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.22 seconds
+      user cpu time       0.21 seconds
+      system cpu time     0.02 seconds
+      memory              4360.84k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:31:03 AM
+      Step Count                        236  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     813
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      1
+      Block Input Operations            0
+      Block Output Operations           49928
+      
+
+186        
+187        
+188        *sort by usubjid;
+189        proc sort data=lbfind out=lbfind1;
+190        by usubjid;
+191        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LBFIND.
+NOTE: The data set WORK.LBFIND1 has 102412 observations and 34 variables.
+NOTE: Compressing data set WORK.LBFIND1 decreased size by 61.23 percent. 
+      Compressed is 195 pages; un-compressed would require 503 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.28 seconds
+      user cpu time       0.22 seconds
+      system cpu time     0.07 seconds
+      memory              91202.53k
+      OS Memory           114380.00k
+      Timestamp           02/12/2024 11:31:03 AM
+      Step Count                        237  Switch Count  2
+4                                                          The SAS System                      Monday, February 12, 2024 12:31:03 PM
+
+      Page Faults                       0
+      Page Reclaims                     22100
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      1
+      Block Input Operations            0
+      Block Output Operations           49936
+      
+
+192        
+193        ***merging lab and dm by usubjid;
+194        data lab;
+195        merge lbfind1 dmf1;
+196        by usubjid;
+197        drop pno batch prot domain protx batch VORDER L_DIG_D YESCOMM LAB_ODAY R_VISD R_VISN SITEID
+198        R_DIF protx visit L_DIG_U SIPVALUE SICVALUE;
+199        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LBFIND1.
+NOTE: There were 742 observations read from the data set WORK.DMF1.
+NOTE: The data set WORK.LAB has 102412 observations and 33 variables.
+NOTE: Compressing data set WORK.LAB decreased size by 65.49 percent. 
+      Compressed is 224 pages; un-compressed would require 649 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.23 seconds
+      user cpu time       0.20 seconds
+      system cpu time     0.02 seconds
+      memory              5084.25k
+      OS Memory           30252.00k
+      Timestamp           02/12/2024 11:31:04 AM
+      Step Count                        238  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     936
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      3
+      Block Input Operations            0
+      Block Output Operations           57352
+      
+
+200        
+201        ***** generaing controlled terminology for lbtest and lbtestcd;
+202        data lab1;
+203        length LBTESTCD $8 LBTEST $40;;
+204        set lab;
+205        
+206        ***generating "LB" domain and LBNAM;
+207        if usubjid ne " " then do;
+208        DOMAIN ="LB";
+209        LBNAM= "WHITEBOARD";
+210        END;
+211        ***** generaing controlled terminology for lbtest and lbtestcd;
+212        if param = "ALT" then do;
+213        LBTESTCD= "ALT";
+214        LBTEST = "Alanine Aminotransferase";
+215        end;
+216        
+217        else if param = "AST" then do;
+5                                                          The SAS System                      Monday, February 12, 2024 12:31:04 PM
+
+218        LBTESTCD="AST";
+219        LBTEST = "Aspartate Aminotransferase";
+220        end;
+221        
+222        else if param = "ALKALINE PHOSPHATASE" then do;
+223        LBTESTCD="ALP";
+224        LBTEST = "Alkaline Phosphatase";
+225        end;
+226        
+227        else if param = "ALBUMIN" then do;
+228        LBTESTCD="ALB";
+229        LBTEST = "Albumin";
+230        end;
+231        
+232        else if param = "UREA" then do;
+233        LBTESTCD="UREA";
+234        LBTEST = "Urea";
+235        end;
+236        
+237        else if param = "HEMOGLOBIN" then do;
+238        LBTESTCD="HGB";
+239        LBTEST = "Hemoglobin";
+240        end;
+241        
+242        else if param = "BILIRUBIN TOTAL" then do;
+243        LBTESTCD="BILI";
+244        LBTEST = "Bilirubin";
+245        end;
+246        
+247        else if param = "BILIRUBIN DIRECT" then do;
+248        LBTESTCD="BILDIR";
+249        LBTEST = "Direct Bilirubin";
+250        end;
+251        
+252        else if param = "HEMATOCRIT" then do;
+253        LBTESTCD="HCT";
+254        LBTEST = "Hematocrit";
+255        end;
+256        
+257        else if param = "B-HCG, QUAL" then do;
+258        LBTESTCD="HCG";
+259        LBTEST = "Choriogonadotropin Beta";
+260        end;
+261        
+262        else if param = "ERYTHROCYTES" then do;
+263        LBTESTCD="RBC";
+264        LBTEST = "Erythrocytes";
+265        end;
+266        
+267        else if param = "LEUCOCYTES" then do;
+268        LBTESTCD="WBC";
+269        LBTEST = "Leukocytes";
+270        end;
+271        
+272        else if param = "CREATININE" then do;
+273        LBTESTCD="CREAT";
+274        LBTEST = "Creatinine";
+275        end;
+6                                                          The SAS System                      Monday, February 12, 2024 12:31:04 PM
+
+276        
+277        else if param = "SODIUM" then do;
+278        LBTESTCD="SODIUM";
+279        LBTEST = "Sodium";
+280        end;
+281        
+282        else if param = "POTASSIUM" then do;
+283        LBTESTCD="K";
+284        LBTEST = "Potassium";
+285        end;
+286        
+287        else if param = "GLUCOSE" then do;
+288        LBTESTCD="GLUC";
+289        LBTEST = "Glucose";
+290        end;
+291        
+292        else if param = "PLATELETS" then do;
+293        LBTESTCD="PLAT";
+294        LBTEST = "Platelets";
+295        end;
+296        drop param;
+297        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB.
+NOTE: The data set WORK.LAB1 has 102412 observations and 36 variables.
+NOTE: Compressing data set WORK.LAB1 decreased size by 63.09 percent. 
+      Compressed is 244 pages; un-compressed would require 661 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.24 seconds
+      user cpu time       0.21 seconds
+      system cpu time     0.03 seconds
+      memory              4393.15k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:31:04 AM
+      Step Count                        239  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     812
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           62480
+      
+
+298        
+299        
+300        ****renaming lb_unit to LBORRESU, si_unit to LBSTRESU, LB_VALUE to LBORRES, and deriving LBSTRESC and LBSTRESN;
+301        data lab2;
+302        length LBSTRESC $8  LBNRIND $20 LBCAT $50;
+303        set lab1(rename=(lb_unit=LBORRESU si_unit=LBSTRESU si_value=LBSTRESN NORL_INV=LBORNRLO NORH_INV=LBORNRHI SHIFT_L=LBSTNRLO
+303      !   SHIFT_H=LBSTNRHI));
+304        LBORRES = compress(LB_VALUE);
+305        LBSTRESC = LBORRES;
+306        LBSTRESN = input(compress(LBSTRESC,"ABCDEFGHIJKLMNOPQRSTUVWXYZ"),comma8.);
+307        RFSTDTC1= input(RFSTDTC, yymmdd10.);
+308        LBDT= input(date, date7.);
+309        
+310        format lbdt yymmdd10. RFSTDTC1 yymmdd10.;
+7                                                          The SAS System                      Monday, February 12, 2024 12:31:04 PM
+
+311        
+312        **baseline flag and derived flag;
+313        drop Age race arm armcd BRTHDTC sex AGEU country RFSTDTC date LB_VALUE;
+314        if lbtestcd in('ALP', 'ALT', 'AST', 'BILDIR', 'BILI', 'HCT', 'HGB') then lbtestcd= "T"||lbtestcd;
+315        if substr(lbtestcd,1,1)= 'T' then LBDRVFL= 'Y';
+316        if lbdt ne . and RFSTDTC1 ne .  and LBORRES ne " " and RFSTDTC1>= lbdt then LBBLFL = "Y";
+317        
+318        
+319        
+320        ***deriving the variable lbcat from labt_ using substr;
+321        if labt_ = "02CLINICAL CHEMISTRY" then
+322        LBCAT = "CHEMISTRY";
+323        else if labt_ = "03URINE" then
+324        LBCAT = "URINALYSIS";
+325        else if labt_ = "01HEMATOLOGY" then
+326        LBCAT = "HEMATOLOGY";
+327        
+328        **variable LBNRIND;
+329        if lbcat not in("URINALYSIS") and lborres not
+330        in(" ") then do;
+331        If .<lbstresn<lbstnrlo then LBNRIND='LOW';
+332        else if lbstnrlo<=lbstresn<=lbstnrhi then
+333        LBNRIND='Normal';
+334        else if lbstresn>lbstnrhi then LBNRIND='HIGH';
+335        End;
+336        Else if lbcat not in
+337        ("HEMATOLOGY", "CHEMISTRY") and lborres
+338        not in (" ") then do;
+339        If flag in ("H") then LBNRIND="HIGH";
+340        else If flag in ("L") then LBNRIND="LOW";
+341        else If flag in (" ") then LBNRIND="NORMAL";
+342        End;
+343        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB1.
+NOTE: The data set WORK.LAB2 has 102412 observations and 33 variables.
+NOTE: Compressing data set WORK.LAB2 decreased size by 61.10 percent. 
+      Compressed is 212 pages; un-compressed would require 545 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.29 seconds
+      user cpu time       0.27 seconds
+      system cpu time     0.03 seconds
+      memory              4411.93k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:31:04 AM
+      Step Count                        240  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     815
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      2
+      Block Input Operations            0
+      Block Output Operations           54288
+      
+
+344        
+345        proc sort data=lab2 out=lab2a;
+346        by subjid lbtestcd lbdt visitd;
+8                                                          The SAS System                      Monday, February 12, 2024 12:31:04 PM
+
+347        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB2.
+NOTE: The data set WORK.LAB2A has 102412 observations and 33 variables.
+NOTE: Compressing data set WORK.LAB2A decreased size by 61.10 percent. 
+      Compressed is 212 pages; un-compressed would require 545 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.27 seconds
+      user cpu time       0.21 seconds
+      system cpu time     0.06 seconds
+      memory              80978.00k
+      OS Memory           104620.00k
+      Timestamp           02/12/2024 11:31:04 AM
+      Step Count                        241  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     19891
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      2
+      Block Input Operations            0
+      Block Output Operations           54288
+      
+
+348        
+349        data lab2b;
+350        set lab2a;
+351        by subjid lbtestcd lbdt visitd;
+352        *by descending usubjid lbdt;
+353        if first.subjid or first.lbtestcd then VISITNUM=.;
+354        VISITNUM+1;
+355        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB2A.
+NOTE: The data set WORK.LAB2B has 102412 observations and 34 variables.
+NOTE: Compressing data set WORK.LAB2B decreased size by 60.98 percent. 
+      Compressed is 215 pages; un-compressed would require 551 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.22 seconds
+      user cpu time       0.20 seconds
+      system cpu time     0.03 seconds
+      memory              4418.78k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:31:05 AM
+      Step Count                        242  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     814
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      2
+      Block Input Operations            0
+      Block Output Operations           55048
+      
+
+356        
+357        ***proc format for visitd;
+358        proc format;
+359        value $visitfmt
+360        "SCREENING_R.1" ="SCREENING (DAY -28 TO DAY -1): UNSCHEDULED 1"
+9                                                          The SAS System                      Monday, February 12, 2024 12:31:05 PM
+
+361        "SCREENING_R.2" ="SCREENING (DAY -28 TO DAY -1): UNSCHEDULED 2"
+362        "WEEK 2" ="VISIT 2 (WEEK 2)"
+363        "MONTH 1" = "VISIT 2 (MONTH 1)"
+364        "MONTH 2" = "VISIT 2 (MONTH 2)"
+365        "MONTH 3" = "VISIT 2 (MONTH 3)"
+366        "MONTH 4" = "VISIT 2 (MONTH 4)"
+367        "MONTH 5" = "VISIT 2 (MONTH 5)"
+368        "MONTH 6" = "VISIT 2 (MONTH 6)"
+369        "MONTH 7" = "VISIT 2 (MONTH 7)"
+370        "MONTH 8" = "VISIT 2 (MONTH 8)"
+371        "MONTH 9" = "VISIT 2 (MONTH 9)"
+372        "MONTH 10" = "VISIT 2 (MONTH 10)"
+373        "MONTH 11" = "VISIT 2 (MONTH 11)"
+374        "MONTH 12" = "VISIT 2 (MONTH 12)"
+375        "MONTH 13" = "VISIT 2 (MONTH 13)"
+376        "MONTH 14" = "VISIT 2 (MONTH 14)"
+377        "MONTH 15" = "VISIT 2 (MONTH 15)"
+378        "MONTH 16" = "VISIT 2 (MONTH 16)"
+379        "MONTH 17" = "VISIT 2 (MONTH 17)"
+380        "MONTH 18" = "VISIT 2 (MONTH 18)"
+381        "MONTH 19" = "VISIT 2 (MONTH 19)"
+382        "MONTH 20" = "VISIT 2 (MONTH 20)"
+383        "MONTH 21" = "VISIT 2 (MONTH 21)"
+384        "MONTH 22" = "VISIT 2 (MONTH 22)"
+385        "MONTH 23" = "VISIT 2 (MONTH 23)"
+386        "MONTH 24" = "VISIT 2 (MONTH 24)"
+387        "MONTH 25" = "VISIT 2 (MONTH 25)"
+388        "MONTH 26" = "VISIT 2 (MONTH 26)"
+389        "MONTH 27" = "VISIT 2 (MONTH 27)"
+390        "MONTH 28" = "VISIT 2 (MONTH 28)"
+391        "MONTH 29" = "VISIT 2 (MONTH 29)"
+392        "MONTH 30" = "VISIT 2 (MONTH 30)"
+393        "MONTH 31" = "VISIT 2 (MONTH 31)"
+394        "MONTH 32" = "VISIT 2 (MONTH 32)"
+395        "MONTH 33" = "VISIT 2 (MONTH 33)"
+396        "MONTH 34" = "VISIT 2 (MONTH 34)"
+397        "MONTH 35" = "VISIT 2 (MONTH 35)"
+398        "MONTH 36" = "VISIT 2 (MONTH 36)"
+399        "MONTH 37" = "VISIT 2 (MONTH 37)"
+400        "MONTH 38" = "VISIT 2 (MONTH 38)"
+401        "MONTH 39" = "VISIT 2 (MONTH 39)"
+402        "MONTH 40" = "VISIT 2 (MONTH 40)"
+403        "MONTH 41" = "VISIT 2 (MONTH 41)"
+404        "MONTH 42" = "VISIT 2 (MONTH 42)"
+405        "MONTH 43" = "VISIT 2 (MONTH 43)"
+406        "MONTH 1_R.1" = "VISIT 2 (MONTH 1)UNSCHEDULED 1"
+407        "MONTH 2_R.1" = "VISIT 2 (MONTH 2) UNSCHEDULED 2"
+408        "MONTH 3_R.1" = "VISIT 2 (MONTH 3) UNSCHEDULED 3"
+409        "MONTH 4_R.1" = "VISIT 2 (MONTH 4) UNSCHEDULED 4"
+410        "MONTH 5_R.1" = "VISIT 2 (MONTH 5) UNSCHEDULED 5"
+411        "MONTH 6_R.1" = "VISIT 2 (MONTH 6)UNSCHEDULED 6"
+412        "MONTH 7_R.1" = "VISIT 2 (MONTH 7)UNSCHEDULED 7"
+413        "MONTH 8_R.1" = "VISIT 2 (MONTH 8)UNSCHEDULED 8"
+414        "MONTH 9_R.1" = "VISIT 2 (MONTH 9)UNSCHEDULED 9"
+415        "MONTH 10_R.1" = "VISIT 2 (MONTH 10)UNSCHEDULED 10"
+416        "MONTH 11_R.1" = "VISIT 2 (MONTH 11)UNSCHEDULED 11"
+417        "MONTH 12_R.1" = "VISIT 2 (MONTH 12)UNSCHEDULED 12"
+418        "MONTH 13_R.1" = "VISIT 2 (MONTH 13)UNSCHEDULED 13"
+10                                                         The SAS System                      Monday, February 12, 2024 12:31:05 PM
+
+419        "MONTH 14_R.1" = "VISIT 2 (MONTH 14)UNSCHEDULED 14"
+420        "MONTH 15_R.1" = "VISIT 2 (MONTH 15)UNSCHEDULED 15"
+421        "MONTH 16_R.1" = "VISIT 2 (MONTH 16)UNSCHEDULED 16"
+422        "MONTH 17_R.1" = "VISIT 2 (MONTH 17)UNSCHEDULED 17"
+423        "MONTH 18_R.1" = "VISIT 2 (MONTH 18)UNSCHEDULED 18"
+424        "MONTH 19_R.1" = "VISIT 2 (MONTH 19)UNSCHEDULED 19"
+425        "MONTH 20_R.1" = "VISIT 2 (MONTH 20)UNSCHEDULED 20"
+426        "MONTH 21_R.1" = "VISIT 2 (MONTH 21)UNSCHEDULED 21"
+427        "MONTH 22_R.1" = "VISIT 2 (MONTH 22)UNSCHEDULED 22"
+428        "MONTH 23_R.1" = "VISIT 2 (MONTH 23)UNSCHEDULED 23"
+429        "MONTH 24_R.1" = "VISIT 2 (MONTH 24)UNSCHEDULED 24"
+430        "MONTH 25_R.1" = "VISIT 2 (MONTH 25)UNSCHEDULED 25"
+431        "MONTH 26_R.1" = "VISIT 2 (MONTH 26)UNSCHEDULED 26"
+432        "MONTH 27_R.1" = "VISIT 2 (MONTH 27)UNSCHEDULED 27"
+433        "MONTH 28_R.1" = "VISIT 2 (MONTH 28)UNSCHEDULED 28"
+434        "MONTH 29_R.1" = "VISIT 2 (MONTH 29)UNSCHEDULED 29"
+435        "MONTH 30_R.1" = "VISIT 2 (MONTH 30)UNSCHEDULED 30"
+436        "MONTH 31_R.1" = "VISIT 2 (MONTH 1)UNSCHEDULED 31"
+437        "MONTH 32_R.1" = "VISIT 2 (MONTH 1)UNSCHEDULED 32"
+438        "MONTH 33_R.1" = "VISIT 2 (MONTH 1)UNSCHEDULED 33"
+439        "MONTH 34_R.1" = "VISIT 2 (MONTH 1) UNSCHEDULED 34"
+440        "MONTH 35_R.1" = "VISIT 2 (MONTH 35)UNSCHEDULED 35"
+441        "MONTH 36_R.1" = "VISIT 2 (MONTH 36) UNSCHEDULED 36"
+442        "MONTH 40_R.1" = "VISIT 2 (MONTH 40)UNSCHEDULED 40"
+443        "END OF TREAT_R.1" = "END OF TREAT (DAY -28 TO DAY -1): UNSCHEDULED 1"
+444        "END OF TREAT_R.2" = "END OF TREAT (DAY -28 TO DAY -1): UNSCHEDULED 2"
+445        "EVENT_R.1" = "EVENT (DAY -28 TO DAY -1): UNSCHEDULED 1"
+446        "EVENT_R.2" = "EVENT (DAY -28 TO DAY -1): UNSCHEDULED 2"
+447        "FOLLOW UP_R.1" = "FOLLOW UP_R.1 (DAY -28 TO DAY -1): UNSCHEDULED 1"
+448        "FOLLOW UP_R.2" = "FOLLOW UP_R.2 (DAY -28 TO DAY -1): UNSCHEDULED 2"
+449        "Local Lab - Page 001a" = "Local Lab (DAY -28 TO DAY -1): UNSCHEDULED 1a"
+450        "Local Lab - Page 001b" = "Local Lab (DAY -28 TO DAY -1): UNSCHEDULED 1b"
+451        "Local Lab - Page 001c" = "Local Lab  (DAY -28 TO DAY -1): UNSCHEDULED 1c"
+452        "RETEST 1" = "VISIT 2 (RETEST 1)"
+453        "RETEST 2" = "VISIT 2 (RETEST 2)"
+454        "RETEST 3" = "VISIT 2 (RETEST 3)"
+455        "RETEST 4" = "VISIT 2 (RETEST 4)"
+456        "RETEST 5" = "VISIT 2 (RETEST 5)"
+457        "RETEST 6" = "VISIT 2 (RETEST 6)"
+458        "RETEST 7" = "VISIT 2 (RETEST 7)"
+459        "RETEST 8" = "VISIT 2 (RETEST 8)"
+460        "RETEST 9" = "VISIT 2 (RETEST 9)"
+461        "RETEST 10" = "VISIT 2 (RETEST 10)"
+462        "RETEST 11" = "VISIT 2 (RETEST 11)"
+463        "RETEST 12" = "VISIT 2 (RETEST 12)"
+464        "RETEST 13" = "VISIT 2 (RETEST 13)"
+465        "RETEST 14" = "VISIT 2 (RETEST 14)"
+466        "RETEST 15" = "VISIT 2 (RETEST 15)"
+467        "RETEST 1_R.1" = "VISIT 2 (RETEST 1)UNSCHEDULED 1"
+468        "RETEST 2_R.1" = "VISIT 2 (RETEST 2) UNSCHEDULED 2"
+469        "RETEST 3_R.1" = "VISIT 2 (RETEST 3) UNSCHEDULED 3"
+470        "RETEST 5_R.1" = "VISIT 2 (RETEST 5) UNSCHEDULED 5"
+471        "RETEST 6_R.1" = "VISIT 2 (RETEST 6)UNSCHEDULED 6"
+472        "RETEST 7_R.1" = "VISIT 2 (RETEST 7)UNSCHEDULED 7"
+473        "RETEST 8_R.1" = "VISIT 2 (RETEST 8)UNSCHEDULED 8"
+474        "RETEST 9_R.1" = "VISIT 2 (RETEST 9)UNSCHEDULED 9"
+475        "RETEST 10_R.1" = "VISIT 2 (RETEST 10)UNSCHEDULED 10"
+476        "RETEST 11_R.1" = "VISIT 2 (RETEST 11)UNSCHEDULED 11"
+11                                                         The SAS System                      Monday, February 12, 2024 12:31:05 PM
+
+477        "RETEST 12_R.1" = "VISIT 2 (RETEST 12)UNSCHEDULED 12"
+478        "RETEST 13_R.1" = "VISIT 2 (RETEST 13)UNSCHEDULED 13"
+479        "RETEST  14_R.1" = "VISIT 2 (RETEST 14)UNSCHEDULED 14"
+480        "RETEST 15_R.1" = "VISIT 2 (RETEST 15)UNSCHEDULED 15"
+481        "RETEST 16_R.1" = "VISIT 2 (RETEST 15)UNSCHEDULED 16";
+NOTE: Format $VISITFMT is already on the library WORK.FORMATS.
+NOTE: Format $VISITFMT has been output.
+482        run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.00 seconds
+      memory              161.75k
+      OS Memory           24736.00k
+      Timestamp           02/12/2024 11:31:05 AM
+      Step Count                        243  Switch Count  0
+      Page Faults                       0
+      Page Reclaims                     16
+      Page Swaps                        0
+      Voluntary Context Switches        1
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           88
+      
+
+483        
+484        
+485        ***sorting to create uniqness;
+486        proc sort data = lab2b out=lab2b1;
+487        by usubjid lbtestcd lbdt visitd;
+488        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB2B.
+NOTE: The data set WORK.LAB2B1 has 102412 observations and 34 variables.
+NOTE: Compressing data set WORK.LAB2B1 decreased size by 60.98 percent. 
+      Compressed is 215 pages; un-compressed would require 551 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.30 seconds
+      user cpu time       0.23 seconds
+      system cpu time     0.07 seconds
+      memory              101375.21k
+      OS Memory           124800.00k
+      Timestamp           02/12/2024 11:31:05 AM
+      Step Count                        244  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     24794
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           55056
+      
+
+489        
+490        ***lbseq and lbdy;
+491        data lab4a(DROP=DMDY DMDTC RFENDTC TRTEM28 FLAG TRTEM1 SUBJID LAB_TDAY PAR_ LABT_ VTYPE);
+492        length VISITD $100;
+12                                                         The SAS System                      Monday, February 12, 2024 12:31:05 PM
+
+493        set lab2b1(rename=(RFSTDTC1=RFSTDTC));
+494        format VISITD $visitfmt.;
+495        if LBDT >= RFSTDTC then LBDY =
+496        (LBDT-RFSTDTC)+1;
+497        else if LBDT<RFSTDTC then LBDY = LBDT-RFSTDTC;
+498        by usubjid lbtestcd lbdt visitd;
+499        *by descending usubjid lbdt;
+500        if first.usubjid then LBSEQ=.;
+501        LBSEQ+1;
+502        run;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      11 at 496:6   
+NOTE: There were 102412 observations read from the data set WORK.LAB2B1.
+NOTE: The data set WORK.LAB4A has 102412 observations and 25 variables.
+NOTE: Compressing data set WORK.LAB4A decreased size by 68.43 percent. 
+      Compressed is 155 pages; un-compressed would require 491 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.20 seconds
+      user cpu time       0.18 seconds
+      system cpu time     0.02 seconds
+      memory              4426.87k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:31:05 AM
+      Step Count                        245  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     815
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      1
+      Block Input Operations            0
+      Block Output Operations           39688
+      
+
+503        
+504        
+505        ***label names for the variables;
+506        data lb(drop=LBDT RFSTDTC);
+507        retain STUDYID DOMAIN USUBJID LBSEQ LBTESTCD LBTEST LBCAT LBORRES LBORRESU
+508        LBORNRLO LBORNRHI LBSTRESC LBSTRESN LBSTRESU LBSTNRLO LBSTNRHI LBNRIND LBNAM LBBLFL
+509        LBDRVFL VISITNUM VISIT LBDTC LBDY;
+510        set lab4a(rename=(visitd=VISIT));
+511        label LBDTC = "Date/Time of SpecimenCollection"
+512        VISIT = "Visit Name"
+513        LBCAT = "Category for Lab Test"
+514        LBORRES = "Result or Finding in Original Units"
+515        LBORRESU = "Original Units"
+516        LBORNRLO = "Reference Range Lower Limit in Orig Unit"
+517        LBORNRHI= "Reference Range Upper Limit in Orig Unit"
+518        LBSTRESC = "Character Result/Finding in Std Format"
+519        LBSTRESN = "Numeric Result/Finding in Standard Units"
+520        LBSTRESU= "Standard Units"
+521        LBSTNRLO = "Reference Range Lower Limit-Std Units"
+522        LBSTNRHI ="Reference Range Upper Limit-Std Units"
+523        LBNRIND = "Reference Range Indicator"
+524        LBBLFL = "Baseline Flag"
+525        LBDRVFL = "Derived Flag"
+13                                                         The SAS System                      Monday, February 12, 2024 12:31:05 PM
+
+526        VISITNUM = "Visit Number"
+527        LBDY = "Study Day of Specimen Collection"
+528        DOMAIN = "Domain Abbreviation"
+529        LBTEST = "Lab Test or Examination Name"
+530        LBTESTCD = "Lab Test or Examination Short Name"
+531        LBSEQ = "Sequence Number";
+532        LBDTC = put(LBDT, yymmdd10.);
+533        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB4A.
+NOTE: The data set WORK.LB has 102412 observations and 24 variables.
+NOTE: Compressing data set WORK.LB decreased size by 68.18 percent. 
+      Compressed is 154 pages; un-compressed would require 484 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.18 seconds
+      user cpu time       0.17 seconds
+      system cpu time     0.02 seconds
+      memory              4330.84k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:31:05 AM
+      Step Count                        246  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     813
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           39440
+      
+
+534        
+535        **sasdataset;
+536        data anadata.LB;
+537        set lb;
+538        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LB.
+NOTE: The data set ANADATA.LB has 102412 observations and 24 variables.
+NOTE: Compressing data set ANADATA.LB decreased size by 68.18 percent. 
+      Compressed is 154 pages; un-compressed would require 484 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.21 seconds
+      user cpu time       0.15 seconds
+      system cpu time     0.03 seconds
+      memory              4340.46k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:31:06 AM
+      Step Count                        247  Switch Count  1
+      Page Faults                       0
+      Page Reclaims                     812
+      Page Swaps                        0
+      Voluntary Context Switches        532
+      Involuntary Context Switches      4
+      Block Input Operations            32
+      Block Output Operations           39432
+      
+
+539        proc printto;
+14                                                         The SAS System                      Monday, February 12, 2024 12:31:06 PM
+
+540        run;
+
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.00 seconds
+      memory              370.25k
+      OS Memory           24480.00k
+      Timestamp           02/12/2024 11:32:15 AM
+      Step Count                        254  Switch Count  0
+      Page Faults                       0
+      Page Reclaims                     51
+      Page Swaps                        0
+      Voluntary Context Switches        5
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           0
+2                                                          The SAS System                      Monday, February 12, 2024 12:32:15 PM
+
+      
+
+168        proc sort data=rawdata.dm out=dmf1;
+NOTE: Data file RAWDATA.DM.DATA is in a format that is native to another host, or the file encoding does not match the session 
+      encoding. Cross Environment Data Access will be used, which might require additional CPU resources and might reduce 
+      performance.
+169        by usubjid;
+170        run;
+
+NOTE: There were 742 observations read from the data set RAWDATA.DM.
+NOTE: The data set WORK.DMF1 has 742 observations and 17 variables.
+NOTE: Compressing data set WORK.DMF1 decreased size by 0.00 percent. 
+      Compressed is 3 pages; un-compressed would require 3 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      user cpu time       0.01 seconds
+      system cpu time     0.00 seconds
+      memory              1868.06k
+      OS Memory           25776.00k
+      Timestamp           02/12/2024 11:32:15 AM
+      Step Count                        255  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     185
+      Page Swaps                        0
+      Voluntary Context Switches        15
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           784
+      
+
+171        
+172        ****generating usubjid for lab;
+173        data l1;
+174        set rawdata.lab;
+NOTE: Data file RAWDATA.LAB.DATA is in a format that is native to another host, or the file encoding does not match the session 
+      encoding. Cross Environment Data Access will be used, which might require additional CPU resources and might reduce 
+      performance.
+175        prot1= substr(prot, 1, 6);
+176        prot2= substr(prot, 8, 3);
+177        protx= put(prot1, 6.) || put(prot2, 3.0);
+178        run;
+
+NOTE: There were 102412 observations read from the data set RAWDATA.LAB.
+NOTE: The data set WORK.L1 has 102412 observations and 35 variables.
+NOTE: Compressing data set WORK.L1 decreased size by 49.19 percent. 
+      Compressed is 188 pages; un-compressed would require 370 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.44 seconds
+      user cpu time       0.42 seconds
+      system cpu time     0.02 seconds
+      memory              2835.06k
+      OS Memory           27044.00k
+      Timestamp           02/12/2024 11:32:16 AM
+      Step Count                        256  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     404
+      Page Swaps                        0
+      Voluntary Context Switches        15
+3                                                          The SAS System                      Monday, February 12, 2024 12:32:16 PM
+
+      Involuntary Context Switches      1
+      Block Input Operations            0
+      Block Output Operations           48144
+      
+
+179        
+180        ****generating usubjid for lab;
+181        data lbfind;
+182        set l1;
+183        USUBJID= catx("-", protx, batch, pno);
+184        drop prot1 prot2;
+185        run;
+
+NOTE: There were 102412 observations read from the data set WORK.L1.
+NOTE: The data set WORK.LBFIND has 102412 observations and 34 variables.
+NOTE: Compressing data set WORK.LBFIND decreased size by 61.23 percent. 
+      Compressed is 195 pages; un-compressed would require 503 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.23 seconds
+      user cpu time       0.20 seconds
+      system cpu time     0.03 seconds
+      memory              4362.25k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:32:16 AM
+      Step Count                        257  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     812
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      2
+      Block Input Operations            0
+      Block Output Operations           49928
+      
+
+186        
+187        
+188        *sort by usubjid;
+189        proc sort data=lbfind out=lbfind1;
+190        by usubjid;
+191        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LBFIND.
+NOTE: The data set WORK.LBFIND1 has 102412 observations and 34 variables.
+NOTE: Compressing data set WORK.LBFIND1 decreased size by 61.23 percent. 
+      Compressed is 195 pages; un-compressed would require 503 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.28 seconds
+      user cpu time       0.23 seconds
+      system cpu time     0.06 seconds
+      memory              91202.18k
+      OS Memory           114380.00k
+      Timestamp           02/12/2024 11:32:16 AM
+      Step Count                        258  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     22101
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      1
+4                                                          The SAS System                      Monday, February 12, 2024 12:32:16 PM
+
+      Block Input Operations            0
+      Block Output Operations           49936
+      
+
+192        
+193        ***merging lab and dm by usubjid;
+194        data lab;
+195        merge lbfind1 dmf1;
+196        by usubjid;
+197        drop pno batch prot domain protx batch VORDER L_DIG_D YESCOMM LAB_ODAY R_VISD R_VISN SITEID
+198        R_DIF protx visit L_DIG_U SIPVALUE SICVALUE;
+199        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LBFIND1.
+NOTE: There were 742 observations read from the data set WORK.DMF1.
+NOTE: The data set WORK.LAB has 102412 observations and 33 variables.
+NOTE: Compressing data set WORK.LAB decreased size by 65.49 percent. 
+      Compressed is 224 pages; un-compressed would require 649 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.23 seconds
+      user cpu time       0.20 seconds
+      system cpu time     0.03 seconds
+      memory              5085.50k
+      OS Memory           30252.00k
+      Timestamp           02/12/2024 11:32:17 AM
+      Step Count                        259  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     935
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      2
+      Block Input Operations            0
+      Block Output Operations           57360
+      
+
+200        
+201        ***** generaing controlled terminology for lbtest and lbtestcd;
+202        data lab1;
+203        length LBTESTCD $8 LBTEST $40;;
+204        set lab;
+205        
+206        ***generating "LB" domain and LBNAM;
+207        if usubjid ne " " then do;
+208        DOMAIN ="LB";
+209        LBNAM= "WHITEBOARD";
+210        END;
+211        ***** generaing controlled terminology for lbtest and lbtestcd;
+212        if param = "ALT" then do;
+213        LBTESTCD= "ALT";
+214        LBTEST = "Alanine Aminotransferase";
+215        end;
+216        
+217        else if param = "AST" then do;
+218        LBTESTCD="AST";
+219        LBTEST = "Aspartate Aminotransferase";
+220        end;
+221        
+222        else if param = "ALKALINE PHOSPHATASE" then do;
+5                                                          The SAS System                      Monday, February 12, 2024 12:32:17 PM
+
+223        LBTESTCD="ALP";
+224        LBTEST = "Alkaline Phosphatase";
+225        end;
+226        
+227        else if param = "ALBUMIN" then do;
+228        LBTESTCD="ALB";
+229        LBTEST = "Albumin";
+230        end;
+231        
+232        else if param = "UREA" then do;
+233        LBTESTCD="UREA";
+234        LBTEST = "Urea";
+235        end;
+236        
+237        else if param = "HEMOGLOBIN" then do;
+238        LBTESTCD="HGB";
+239        LBTEST = "Hemoglobin";
+240        end;
+241        
+242        else if param = "BILIRUBIN TOTAL" then do;
+243        LBTESTCD="BILI";
+244        LBTEST = "Bilirubin";
+245        end;
+246        
+247        else if param = "BILIRUBIN DIRECT" then do;
+248        LBTESTCD="BILDIR";
+249        LBTEST = "Direct Bilirubin";
+250        end;
+251        
+252        else if param = "HEMATOCRIT" then do;
+253        LBTESTCD="HCT";
+254        LBTEST = "Hematocrit";
+255        end;
+256        
+257        else if param = "B-HCG, QUAL" then do;
+258        LBTESTCD="HCG";
+259        LBTEST = "Choriogonadotropin Beta";
+260        end;
+261        
+262        else if param = "ERYTHROCYTES" then do;
+263        LBTESTCD="RBC";
+264        LBTEST = "Erythrocytes";
+265        end;
+266        
+267        else if param = "LEUCOCYTES" then do;
+268        LBTESTCD="WBC";
+269        LBTEST = "Leukocytes";
+270        end;
+271        
+272        else if param = "CREATININE" then do;
+273        LBTESTCD="CREAT";
+274        LBTEST = "Creatinine";
+275        end;
+276        
+277        else if param = "SODIUM" then do;
+278        LBTESTCD="SODIUM";
+279        LBTEST = "Sodium";
+280        end;
+6                                                          The SAS System                      Monday, February 12, 2024 12:32:17 PM
+
+281        
+282        else if param = "POTASSIUM" then do;
+283        LBTESTCD="K";
+284        LBTEST = "Potassium";
+285        end;
+286        
+287        else if param = "GLUCOSE" then do;
+288        LBTESTCD="GLUC";
+289        LBTEST = "Glucose";
+290        end;
+291        
+292        else if param = "PLATELETS" then do;
+293        LBTESTCD="PLAT";
+294        LBTEST = "Platelets";
+295        end;
+296        drop param;
+297        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB.
+NOTE: The data set WORK.LAB1 has 102412 observations and 36 variables.
+NOTE: Compressing data set WORK.LAB1 decreased size by 63.09 percent. 
+      Compressed is 244 pages; un-compressed would require 661 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.24 seconds
+      user cpu time       0.21 seconds
+      system cpu time     0.04 seconds
+      memory              4392.96k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:32:17 AM
+      Step Count                        260  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     812
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      1
+      Block Input Operations            0
+      Block Output Operations           62480
+      
+
+298        
+299        
+300        ****renaming lb_unit to LBORRESU, si_unit to LBSTRESU, LB_VALUE to LBORRES, and deriving LBSTRESC and LBSTRESN;
+301        data lab2;
+302        length LBSTRESC $8  LBNRIND $20 LBCAT $50;
+303        set lab1(rename=(lb_unit=LBORRESU si_unit=LBSTRESU si_value=LBSTRESN NORL_INV=LBORNRLO NORH_INV=LBORNRHI SHIFT_L=LBSTNRLO
+303      !   SHIFT_H=LBSTNRHI));
+304        LBORRES = compress(LB_VALUE);
+305        LBSTRESC = LBORRES;
+306        LBSTRESN = input(compress(LBSTRESC,"ABCDEFGHIJKLMNOPQRSTUVWXYZ"),comma8.);
+307        RFSTDTC1= input(RFSTDTC, yymmdd10.);
+308        LBDT= input(date, date7.);
+309        
+310        format lbdt yymmdd10. RFSTDTC1 yymmdd10.;
+311        
+312        **baseline flag and derived flag;
+313        drop Age race arm armcd BRTHDTC sex AGEU country RFSTDTC date LB_VALUE;
+314        if lbtestcd in('ALP', 'ALT', 'AST', 'BILDIR', 'BILI', 'HCT', 'HGB') then lbtestcd= "T"||lbtestcd;
+315        if substr(lbtestcd,1,1)= 'T' then LBDRVFL= 'Y';
+7                                                          The SAS System                      Monday, February 12, 2024 12:32:17 PM
+
+316        if lbdt ne . and RFSTDTC1 ne .  and LBORRES ne " " and RFSTDTC1>= lbdt then LBBLFL = "Y";
+317        
+318        
+319        
+320        ***deriving the variable lbcat from labt_ using substr;
+321        if labt_ = "02CLINICAL CHEMISTRY" then
+322        LBCAT = "CHEMISTRY";
+323        else if labt_ = "03URINE" then
+324        LBCAT = "URINALYSIS";
+325        else if labt_ = "01HEMATOLOGY" then
+326        LBCAT = "HEMATOLOGY";
+327        
+328        **variable LBNRIND;
+329        if lbcat not in("URINALYSIS") and lborres not
+330        in(" ") then do;
+331        If .<lbstresn<lbstnrlo then LBNRIND='LOW';
+332        else if lbstnrlo<=lbstresn<=lbstnrhi then
+333        LBNRIND='Normal';
+334        else if lbstresn>lbstnrhi then LBNRIND='HIGH';
+335        End;
+336        Else if lbcat not in
+337        ("HEMATOLOGY", "CHEMISTRY") and lborres
+338        not in (" ") then do;
+339        If flag in ("H") then LBNRIND="HIGH";
+340        else If flag in ("L") then LBNRIND="LOW";
+341        else If flag in (" ") then LBNRIND="NORMAL";
+342        End;
+343        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB1.
+NOTE: The data set WORK.LAB2 has 102412 observations and 33 variables.
+NOTE: Compressing data set WORK.LAB2 decreased size by 61.10 percent. 
+      Compressed is 212 pages; un-compressed would require 545 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.29 seconds
+      user cpu time       0.27 seconds
+      system cpu time     0.02 seconds
+      memory              4415.03k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:32:17 AM
+      Step Count                        261  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     815
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           54280
+      
+
+344        
+345        proc sort data=lab2 out=lab2a;
+346        by subjid lbtestcd lbdt visitd;
+347        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB2.
+NOTE: The data set WORK.LAB2A has 102412 observations and 33 variables.
+NOTE: Compressing data set WORK.LAB2A decreased size by 61.10 percent. 
+8                                                          The SAS System                      Monday, February 12, 2024 12:32:17 PM
+
+      Compressed is 212 pages; un-compressed would require 545 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.27 seconds
+      user cpu time       0.21 seconds
+      system cpu time     0.07 seconds
+      memory              80975.09k
+      OS Memory           104620.00k
+      Timestamp           02/12/2024 11:32:17 AM
+      Step Count                        262  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     19891
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      1
+      Block Input Operations            0
+      Block Output Operations           54296
+      
+
+348        
+349        data lab2b;
+350        set lab2a;
+351        by subjid lbtestcd lbdt visitd;
+352        *by descending usubjid lbdt;
+353        if first.subjid or first.lbtestcd then VISITNUM=.;
+354        VISITNUM+1;
+355        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB2A.
+NOTE: The data set WORK.LAB2B has 102412 observations and 34 variables.
+NOTE: Compressing data set WORK.LAB2B decreased size by 60.98 percent. 
+      Compressed is 215 pages; un-compressed would require 551 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.22 seconds
+      user cpu time       0.20 seconds
+      system cpu time     0.02 seconds
+      memory              4419.03k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:32:18 AM
+      Step Count                        263  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     814
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           55048
+      
+
+356        
+357        ***proc format for visitd;
+358        proc format;
+359        value $visitfmt
+360        "SCREENING_R.1" ="SCREENING (DAY -28 TO DAY -1): UNSCHEDULED 1"
+361        "SCREENING_R.2" ="SCREENING (DAY -28 TO DAY -1): UNSCHEDULED 2"
+362        "WEEK 2" ="VISIT 2 (WEEK 2)"
+363        "MONTH 1" = "VISIT 2 (MONTH 1)"
+364        "MONTH 2" = "VISIT 2 (MONTH 2)"
+365        "MONTH 3" = "VISIT 2 (MONTH 3)"
+9                                                          The SAS System                      Monday, February 12, 2024 12:32:18 PM
+
+366        "MONTH 4" = "VISIT 2 (MONTH 4)"
+367        "MONTH 5" = "VISIT 2 (MONTH 5)"
+368        "MONTH 6" = "VISIT 2 (MONTH 6)"
+369        "MONTH 7" = "VISIT 2 (MONTH 7)"
+370        "MONTH 8" = "VISIT 2 (MONTH 8)"
+371        "MONTH 9" = "VISIT 2 (MONTH 9)"
+372        "MONTH 10" = "VISIT 2 (MONTH 10)"
+373        "MONTH 11" = "VISIT 2 (MONTH 11)"
+374        "MONTH 12" = "VISIT 2 (MONTH 12)"
+375        "MONTH 13" = "VISIT 2 (MONTH 13)"
+376        "MONTH 14" = "VISIT 2 (MONTH 14)"
+377        "MONTH 15" = "VISIT 2 (MONTH 15)"
+378        "MONTH 16" = "VISIT 2 (MONTH 16)"
+379        "MONTH 17" = "VISIT 2 (MONTH 17)"
+380        "MONTH 18" = "VISIT 2 (MONTH 18)"
+381        "MONTH 19" = "VISIT 2 (MONTH 19)"
+382        "MONTH 20" = "VISIT 2 (MONTH 20)"
+383        "MONTH 21" = "VISIT 2 (MONTH 21)"
+384        "MONTH 22" = "VISIT 2 (MONTH 22)"
+385        "MONTH 23" = "VISIT 2 (MONTH 23)"
+386        "MONTH 24" = "VISIT 2 (MONTH 24)"
+387        "MONTH 25" = "VISIT 2 (MONTH 25)"
+388        "MONTH 26" = "VISIT 2 (MONTH 26)"
+389        "MONTH 27" = "VISIT 2 (MONTH 27)"
+390        "MONTH 28" = "VISIT 2 (MONTH 28)"
+391        "MONTH 29" = "VISIT 2 (MONTH 29)"
+392        "MONTH 30" = "VISIT 2 (MONTH 30)"
+393        "MONTH 31" = "VISIT 2 (MONTH 31)"
+394        "MONTH 32" = "VISIT 2 (MONTH 32)"
+395        "MONTH 33" = "VISIT 2 (MONTH 33)"
+396        "MONTH 34" = "VISIT 2 (MONTH 34)"
+397        "MONTH 35" = "VISIT 2 (MONTH 35)"
+398        "MONTH 36" = "VISIT 2 (MONTH 36)"
+399        "MONTH 37" = "VISIT 2 (MONTH 37)"
+400        "MONTH 38" = "VISIT 2 (MONTH 38)"
+401        "MONTH 39" = "VISIT 2 (MONTH 39)"
+402        "MONTH 40" = "VISIT 2 (MONTH 40)"
+403        "MONTH 41" = "VISIT 2 (MONTH 41)"
+404        "MONTH 42" = "VISIT 2 (MONTH 42)"
+405        "MONTH 43" = "VISIT 2 (MONTH 43)"
+406        "MONTH 1_R.1" = "VISIT 2 (MONTH 1)UNSCHEDULED 1"
+407        "MONTH 2_R.1" = "VISIT 2 (MONTH 2) UNSCHEDULED 2"
+408        "MONTH 3_R.1" = "VISIT 2 (MONTH 3) UNSCHEDULED 3"
+409        "MONTH 4_R.1" = "VISIT 2 (MONTH 4) UNSCHEDULED 4"
+410        "MONTH 5_R.1" = "VISIT 2 (MONTH 5) UNSCHEDULED 5"
+411        "MONTH 6_R.1" = "VISIT 2 (MONTH 6)UNSCHEDULED 6"
+412        "MONTH 7_R.1" = "VISIT 2 (MONTH 7)UNSCHEDULED 7"
+413        "MONTH 8_R.1" = "VISIT 2 (MONTH 8)UNSCHEDULED 8"
+414        "MONTH 9_R.1" = "VISIT 2 (MONTH 9)UNSCHEDULED 9"
+415        "MONTH 10_R.1" = "VISIT 2 (MONTH 10)UNSCHEDULED 10"
+416        "MONTH 11_R.1" = "VISIT 2 (MONTH 11)UNSCHEDULED 11"
+417        "MONTH 12_R.1" = "VISIT 2 (MONTH 12)UNSCHEDULED 12"
+418        "MONTH 13_R.1" = "VISIT 2 (MONTH 13)UNSCHEDULED 13"
+419        "MONTH 14_R.1" = "VISIT 2 (MONTH 14)UNSCHEDULED 14"
+420        "MONTH 15_R.1" = "VISIT 2 (MONTH 15)UNSCHEDULED 15"
+421        "MONTH 16_R.1" = "VISIT 2 (MONTH 16)UNSCHEDULED 16"
+422        "MONTH 17_R.1" = "VISIT 2 (MONTH 17)UNSCHEDULED 17"
+423        "MONTH 18_R.1" = "VISIT 2 (MONTH 18)UNSCHEDULED 18"
+10                                                         The SAS System                      Monday, February 12, 2024 12:32:18 PM
+
+424        "MONTH 19_R.1" = "VISIT 2 (MONTH 19)UNSCHEDULED 19"
+425        "MONTH 20_R.1" = "VISIT 2 (MONTH 20)UNSCHEDULED 20"
+426        "MONTH 21_R.1" = "VISIT 2 (MONTH 21)UNSCHEDULED 21"
+427        "MONTH 22_R.1" = "VISIT 2 (MONTH 22)UNSCHEDULED 22"
+428        "MONTH 23_R.1" = "VISIT 2 (MONTH 23)UNSCHEDULED 23"
+429        "MONTH 24_R.1" = "VISIT 2 (MONTH 24)UNSCHEDULED 24"
+430        "MONTH 25_R.1" = "VISIT 2 (MONTH 25)UNSCHEDULED 25"
+431        "MONTH 26_R.1" = "VISIT 2 (MONTH 26)UNSCHEDULED 26"
+432        "MONTH 27_R.1" = "VISIT 2 (MONTH 27)UNSCHEDULED 27"
+433        "MONTH 28_R.1" = "VISIT 2 (MONTH 28)UNSCHEDULED 28"
+434        "MONTH 29_R.1" = "VISIT 2 (MONTH 29)UNSCHEDULED 29"
+435        "MONTH 30_R.1" = "VISIT 2 (MONTH 30)UNSCHEDULED 30"
+436        "MONTH 31_R.1" = "VISIT 2 (MONTH 1)UNSCHEDULED 31"
+437        "MONTH 32_R.1" = "VISIT 2 (MONTH 1)UNSCHEDULED 32"
+438        "MONTH 33_R.1" = "VISIT 2 (MONTH 1)UNSCHEDULED 33"
+439        "MONTH 34_R.1" = "VISIT 2 (MONTH 1) UNSCHEDULED 34"
+440        "MONTH 35_R.1" = "VISIT 2 (MONTH 35)UNSCHEDULED 35"
+441        "MONTH 36_R.1" = "VISIT 2 (MONTH 36) UNSCHEDULED 36"
+442        "MONTH 40_R.1" = "VISIT 2 (MONTH 40)UNSCHEDULED 40"
+443        "END OF TREAT_R.1" = "END OF TREAT (DAY -28 TO DAY -1): UNSCHEDULED 1"
+444        "END OF TREAT_R.2" = "END OF TREAT (DAY -28 TO DAY -1): UNSCHEDULED 2"
+445        "EVENT_R.1" = "EVENT (DAY -28 TO DAY -1): UNSCHEDULED 1"
+446        "EVENT_R.2" = "EVENT (DAY -28 TO DAY -1): UNSCHEDULED 2"
+447        "FOLLOW UP_R.1" = "FOLLOW UP_R.1 (DAY -28 TO DAY -1): UNSCHEDULED 1"
+448        "FOLLOW UP_R.2" = "FOLLOW UP_R.2 (DAY -28 TO DAY -1): UNSCHEDULED 2"
+449        "Local Lab - Page 001a" = "Local Lab (DAY -28 TO DAY -1): UNSCHEDULED 1a"
+450        "Local Lab - Page 001b" = "Local Lab (DAY -28 TO DAY -1): UNSCHEDULED 1b"
+451        "Local Lab - Page 001c" = "Local Lab  (DAY -28 TO DAY -1): UNSCHEDULED 1c"
+452        "RETEST 1" = "VISIT 2 (RETEST 1)"
+453        "RETEST 2" = "VISIT 2 (RETEST 2)"
+454        "RETEST 3" = "VISIT 2 (RETEST 3)"
+455        "RETEST 4" = "VISIT 2 (RETEST 4)"
+456        "RETEST 5" = "VISIT 2 (RETEST 5)"
+457        "RETEST 6" = "VISIT 2 (RETEST 6)"
+458        "RETEST 7" = "VISIT 2 (RETEST 7)"
+459        "RETEST 8" = "VISIT 2 (RETEST 8)"
+460        "RETEST 9" = "VISIT 2 (RETEST 9)"
+461        "RETEST 10" = "VISIT 2 (RETEST 10)"
+462        "RETEST 11" = "VISIT 2 (RETEST 11)"
+463        "RETEST 12" = "VISIT 2 (RETEST 12)"
+464        "RETEST 13" = "VISIT 2 (RETEST 13)"
+465        "RETEST 14" = "VISIT 2 (RETEST 14)"
+466        "RETEST 15" = "VISIT 2 (RETEST 15)"
+467        "RETEST 1_R.1" = "VISIT 2 (RETEST 1)UNSCHEDULED 1"
+468        "RETEST 2_R.1" = "VISIT 2 (RETEST 2) UNSCHEDULED 2"
+469        "RETEST 3_R.1" = "VISIT 2 (RETEST 3) UNSCHEDULED 3"
+470        "RETEST 5_R.1" = "VISIT 2 (RETEST 5) UNSCHEDULED 5"
+471        "RETEST 6_R.1" = "VISIT 2 (RETEST 6)UNSCHEDULED 6"
+472        "RETEST 7_R.1" = "VISIT 2 (RETEST 7)UNSCHEDULED 7"
+473        "RETEST 8_R.1" = "VISIT 2 (RETEST 8)UNSCHEDULED 8"
+474        "RETEST 9_R.1" = "VISIT 2 (RETEST 9)UNSCHEDULED 9"
+475        "RETEST 10_R.1" = "VISIT 2 (RETEST 10)UNSCHEDULED 10"
+476        "RETEST 11_R.1" = "VISIT 2 (RETEST 11)UNSCHEDULED 11"
+477        "RETEST 12_R.1" = "VISIT 2 (RETEST 12)UNSCHEDULED 12"
+478        "RETEST 13_R.1" = "VISIT 2 (RETEST 13)UNSCHEDULED 13"
+479        "RETEST  14_R.1" = "VISIT 2 (RETEST 14)UNSCHEDULED 14"
+480        "RETEST 15_R.1" = "VISIT 2 (RETEST 15)UNSCHEDULED 15"
+481        "RETEST 16_R.1" = "VISIT 2 (RETEST 15)UNSCHEDULED 16";
+11                                                         The SAS System                      Monday, February 12, 2024 12:32:18 PM
+
+NOTE: Format $VISITFMT is already on the library WORK.FORMATS.
+NOTE: Format $VISITFMT has been output.
+482        run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.00 seconds
+      memory              145.68k
+      OS Memory           24736.00k
+      Timestamp           02/12/2024 11:32:18 AM
+      Step Count                        264  Switch Count  0
+      Page Faults                       0
+      Page Reclaims                     15
+      Page Swaps                        0
+      Voluntary Context Switches        0
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           88
+      
+
+483        
+484        
+485        ***sorting to create uniqness;
+486        proc sort data = lab2b out=lab2b1;
+487        by usubjid lbtestcd lbdt visitd;
+488        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB2B.
+NOTE: The data set WORK.LAB2B1 has 102412 observations and 34 variables.
+NOTE: Compressing data set WORK.LAB2B1 decreased size by 60.98 percent. 
+      Compressed is 215 pages; un-compressed would require 551 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.30 seconds
+      user cpu time       0.23 seconds
+      system cpu time     0.07 seconds
+      memory              101375.31k
+      OS Memory           124800.00k
+      Timestamp           02/12/2024 11:32:18 AM
+      Step Count                        265  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     24793
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      1
+      Block Input Operations            0
+      Block Output Operations           55056
+      
+
+489        
+490        ***lbseq and lbdy;
+491        data lab4a(DROP=DMDY DMDTC RFENDTC TRTEM28 FLAG TRTEM1 SUBJID LAB_TDAY PAR_ LABT_ VTYPE);
+492        length VISITD $100;
+493        set lab2b1(rename=(RFSTDTC1=RFSTDTC));
+494        format VISITD $visitfmt.;
+495        if LBDT >= RFSTDTC then LBDY =
+496        (LBDT-RFSTDTC)+1;
+497        else if LBDT<RFSTDTC then LBDY = LBDT-RFSTDTC;
+12                                                         The SAS System                      Monday, February 12, 2024 12:32:18 PM
+
+498        by usubjid lbtestcd lbdt visitd;
+499        *by descending usubjid lbdt;
+500        if first.usubjid then LBSEQ=.;
+501        LBSEQ+1;
+502        run;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      11 at 496:6   
+NOTE: There were 102412 observations read from the data set WORK.LAB2B1.
+NOTE: The data set WORK.LAB4A has 102412 observations and 25 variables.
+NOTE: Compressing data set WORK.LAB4A decreased size by 68.43 percent. 
+      Compressed is 155 pages; un-compressed would require 491 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.20 seconds
+      user cpu time       0.18 seconds
+      system cpu time     0.03 seconds
+      memory              4430.46k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:32:18 AM
+      Step Count                        266  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     816
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           39696
+      
+
+503        
+504        
+505        ***label names for the variables;
+506        data lb(drop=LBDT RFSTDTC);
+507        retain STUDYID DOMAIN USUBJID LBSEQ LBTESTCD LBTEST LBCAT LBORRES LBORRESU
+508        LBORNRLO LBORNRHI LBSTRESC LBSTRESN LBSTRESU LBSTNRLO LBSTNRHI LBNRIND LBNAM LBBLFL
+509        LBDRVFL VISITNUM VISIT LBDTC LBDY;
+510        set lab4a(rename=(visitd=VISIT));
+511        label LBDTC = "Date/Time of SpecimenCollection"
+512        VISIT = "Visit Name"
+513        LBCAT = "Category for Lab Test"
+514        LBORRES = "Result or Finding in Original Units"
+515        LBORRESU = "Original Units"
+516        LBORNRLO = "Reference Range Lower Limit in Orig Unit"
+517        LBORNRHI= "Reference Range Upper Limit in Orig Unit"
+518        LBSTRESC = "Character Result/Finding in Std Format"
+519        LBSTRESN = "Numeric Result/Finding in Standard Units"
+520        LBSTRESU= "Standard Units"
+521        LBSTNRLO = "Reference Range Lower Limit-Std Units"
+522        LBSTNRHI ="Reference Range Upper Limit-Std Units"
+523        LBNRIND = "Reference Range Indicator"
+524        LBBLFL = "Baseline Flag"
+525        LBDRVFL = "Derived Flag"
+526        VISITNUM = "Visit Number"
+527        LBDY = "Study Day of Specimen Collection"
+528        DOMAIN = "Domain Abbreviation"
+529        LBTEST = "Lab Test or Examination Name"
+530        LBTESTCD = "Lab Test or Examination Short Name"
+13                                                         The SAS System                      Monday, February 12, 2024 12:32:18 PM
+
+531        LBSEQ = "Sequence Number";
+532        LBDTC = put(LBDT, yymmdd10.);
+533        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB4A.
+NOTE: The data set WORK.LB has 102412 observations and 24 variables.
+NOTE: Compressing data set WORK.LB decreased size by 68.18 percent. 
+      Compressed is 154 pages; un-compressed would require 484 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.18 seconds
+      user cpu time       0.16 seconds
+      system cpu time     0.02 seconds
+      memory              4327.40k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:32:18 AM
+      Step Count                        267  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     812
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           39432
+      
+
+534        
+535        **sasdataset;
+536        data anadata.LB;
+537        set lb;
+538        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LB.
+NOTE: The data set ANADATA.LB has 102412 observations and 24 variables.
+NOTE: Compressing data set ANADATA.LB decreased size by 68.18 percent. 
+      Compressed is 154 pages; un-compressed would require 484 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.22 seconds
+      user cpu time       0.15 seconds
+      system cpu time     0.04 seconds
+      memory              4341.53k
+      OS Memory           29608.00k
+      Timestamp           02/12/2024 11:32:18 AM
+      Step Count                        268  Switch Count  1
+      Page Faults                       0
+      Page Reclaims                     813
+      Page Swaps                        0
+      Voluntary Context Switches        458
+      Involuntary Context Switches      2
+      Block Input Operations            32
+      Block Output Operations           39432
+      
+
+539        proc printto;
+540        run;
+
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.00 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.00 seconds
+      memory              268.18k
+      OS Memory           22688.00k
+      Timestamp           02/12/2024 11:40:53 AM
+      Step Count                        79  Switch Count  0
+      Page Faults                       0
+      Page Reclaims                     16
+      Page Swaps                        0
+      Voluntary Context Switches        5
+      Involuntary Context Switches      0
+      Block Input Operations            32
+      Block Output Operations           0
+2                                                          The SAS System                      Monday, February 12, 2024 12:40:53 PM
+
+      
+
+168        proc sort data=rawdata.dm out=dmf1;
+NOTE: Data file RAWDATA.DM.DATA is in a format that is native to another host, or the file encoding does not match the session 
+      encoding. Cross Environment Data Access will be used, which might require additional CPU resources and might reduce 
+      performance.
+169        by usubjid;
+170        run;
+
+NOTE: There were 742 observations read from the data set RAWDATA.DM.
+NOTE: The data set WORK.DMF1 has 742 observations and 17 variables.
+NOTE: Compressing data set WORK.DMF1 decreased size by 0.00 percent. 
+      Compressed is 3 pages; un-compressed would require 3 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.00 seconds
+      user cpu time       0.00 seconds
+      system cpu time     0.00 seconds
+      memory              1877.21k
+      OS Memory           23728.00k
+      Timestamp           02/12/2024 11:40:53 AM
+      Step Count                        80  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     257
+      Page Swaps                        0
+      Voluntary Context Switches        15
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           784
+      
+
+171        
+172        ****generating usubjid for lab;
+173        data l1;
+174        set rawdata.lab;
+NOTE: Data file RAWDATA.LAB.DATA is in a format that is native to another host, or the file encoding does not match the session 
+      encoding. Cross Environment Data Access will be used, which might require additional CPU resources and might reduce 
+      performance.
+175        prot1= substr(prot, 1, 6);
+176        prot2= substr(prot, 8, 3);
+177        protx= put(prot1, 6.) || put(prot2, 3.0);
+178        run;
+
+NOTE: There were 102412 observations read from the data set RAWDATA.LAB.
+NOTE: The data set WORK.L1 has 102412 observations and 35 variables.
+NOTE: Compressing data set WORK.L1 decreased size by 49.19 percent. 
+      Compressed is 188 pages; un-compressed would require 370 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.45 seconds
+      user cpu time       0.44 seconds
+      system cpu time     0.02 seconds
+      memory              2843.84k
+      OS Memory           26020.00k
+      Timestamp           02/12/2024 11:40:54 AM
+      Step Count                        81  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     474
+      Page Swaps                        0
+      Voluntary Context Switches        15
+3                                                          The SAS System                      Monday, February 12, 2024 12:40:54 PM
+
+      Involuntary Context Switches      1
+      Block Input Operations            0
+      Block Output Operations           48136
+      
+
+179        
+180        ****generating usubjid for lab;
+181        data lbfind;
+182        set l1;
+183        USUBJID= catx("-", protx, batch, pno);
+184        drop prot1 prot2;
+185        run;
+
+NOTE: There were 102412 observations read from the data set WORK.L1.
+NOTE: The data set WORK.LBFIND has 102412 observations and 34 variables.
+NOTE: Compressing data set WORK.LBFIND decreased size by 61.23 percent. 
+      Compressed is 195 pages; un-compressed would require 503 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.23 seconds
+      user cpu time       0.21 seconds
+      system cpu time     0.03 seconds
+      memory              4361.96k
+      OS Memory           28584.00k
+      Timestamp           02/12/2024 11:40:54 AM
+      Step Count                        82  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     752
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           49928
+      
+
+186        
+187        
+188        *sort by usubjid;
+189        proc sort data=lbfind out=lbfind1;
+190        by usubjid;
+191        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LBFIND.
+NOTE: The data set WORK.LBFIND1 has 102412 observations and 34 variables.
+NOTE: Compressing data set WORK.LBFIND1 decreased size by 61.23 percent. 
+      Compressed is 195 pages; un-compressed would require 503 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.28 seconds
+      user cpu time       0.22 seconds
+      system cpu time     0.06 seconds
+      memory              91195.53k
+      OS Memory           113868.00k
+      Timestamp           02/12/2024 11:40:54 AM
+      Step Count                        83  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     22041
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+4                                                          The SAS System                      Monday, February 12, 2024 12:40:54 PM
+
+      Block Input Operations            0
+      Block Output Operations           49936
+      
+
+192        
+193        ***merging lab and dm by usubjid;
+194        data lab;
+195        merge lbfind1 dmf1;
+196        by usubjid;
+197        drop pno batch prot domain protx batch VORDER L_DIG_D YESCOMM LAB_ODAY R_VISD R_VISN SITEID
+198        R_DIF protx visit L_DIG_U SIPVALUE SICVALUE;
+199        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LBFIND1.
+NOTE: There were 742 observations read from the data set WORK.DMF1.
+NOTE: The data set WORK.LAB has 102412 observations and 33 variables.
+NOTE: Compressing data set WORK.LAB decreased size by 65.49 percent. 
+      Compressed is 224 pages; un-compressed would require 649 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.23 seconds
+      user cpu time       0.21 seconds
+      system cpu time     0.02 seconds
+      memory              5084.71k
+      OS Memory           29740.00k
+      Timestamp           02/12/2024 11:40:54 AM
+      Step Count                        84  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     853
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           57360
+      
+
+200        
+201        ***** generaing controlled terminology for lbtest and lbtestcd;
+202        data lab1;
+203        length LBTESTCD $8 LBTEST $40;;
+204        set lab;
+205        
+206        ***generating "LB" domain and LBNAM;
+207        if usubjid ne " " then do;
+208        DOMAIN ="LB";
+209        LBNAM= "WHITEBOARD";
+210        END;
+211        ***** generaing controlled terminology for lbtest and lbtestcd;
+212        if param = "ALT" then do;
+213        LBTESTCD= "ALT";
+214        LBTEST = "Alanine Aminotransferase";
+215        end;
+216        
+217        else if param = "AST" then do;
+218        LBTESTCD="AST";
+219        LBTEST = "Aspartate Aminotransferase";
+220        end;
+221        
+222        else if param = "ALKALINE PHOSPHATASE" then do;
+5                                                          The SAS System                      Monday, February 12, 2024 12:40:54 PM
+
+223        LBTESTCD="ALP";
+224        LBTEST = "Alkaline Phosphatase";
+225        end;
+226        
+227        else if param = "ALBUMIN" then do;
+228        LBTESTCD="ALB";
+229        LBTEST = "Albumin";
+230        end;
+231        
+232        else if param = "UREA" then do;
+233        LBTESTCD="UREA";
+234        LBTEST = "Urea";
+235        end;
+236        
+237        else if param = "HEMOGLOBIN" then do;
+238        LBTESTCD="HGB";
+239        LBTEST = "Hemoglobin";
+240        end;
+241        
+242        else if param = "BILIRUBIN TOTAL" then do;
+243        LBTESTCD="BILI";
+244        LBTEST = "Bilirubin";
+245        end;
+246        
+247        else if param = "BILIRUBIN DIRECT" then do;
+248        LBTESTCD="BILDIR";
+249        LBTEST = "Direct Bilirubin";
+250        end;
+251        
+252        else if param = "HEMATOCRIT" then do;
+253        LBTESTCD="HCT";
+254        LBTEST = "Hematocrit";
+255        end;
+256        
+257        else if param = "B-HCG, QUAL" then do;
+258        LBTESTCD="HCG";
+259        LBTEST = "Choriogonadotropin Beta";
+260        end;
+261        
+262        else if param = "ERYTHROCYTES" then do;
+263        LBTESTCD="RBC";
+264        LBTEST = "Erythrocytes";
+265        end;
+266        
+267        else if param = "LEUCOCYTES" then do;
+268        LBTESTCD="WBC";
+269        LBTEST = "Leukocytes";
+270        end;
+271        
+272        else if param = "CREATININE" then do;
+273        LBTESTCD="CREAT";
+274        LBTEST = "Creatinine";
+275        end;
+276        
+277        else if param = "SODIUM" then do;
+278        LBTESTCD="SODIUM";
+279        LBTEST = "Sodium";
+280        end;
+6                                                          The SAS System                      Monday, February 12, 2024 12:40:54 PM
+
+281        
+282        else if param = "POTASSIUM" then do;
+283        LBTESTCD="K";
+284        LBTEST = "Potassium";
+285        end;
+286        
+287        else if param = "GLUCOSE" then do;
+288        LBTESTCD="GLUC";
+289        LBTEST = "Glucose";
+290        end;
+291        
+292        else if param = "PLATELETS" then do;
+293        LBTESTCD="PLAT";
+294        LBTEST = "Platelets";
+295        end;
+296        drop param;
+297        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB.
+NOTE: The data set WORK.LAB1 has 102412 observations and 36 variables.
+NOTE: Compressing data set WORK.LAB1 decreased size by 63.09 percent. 
+      Compressed is 244 pages; un-compressed would require 661 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.24 seconds
+      user cpu time       0.22 seconds
+      system cpu time     0.03 seconds
+      memory              4393.40k
+      OS Memory           29096.00k
+      Timestamp           02/12/2024 11:40:55 AM
+      Step Count                        85  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     742
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           62480
+      
+
+298        
+299        
+300        ****renaming lb_unit to LBORRESU, si_unit to LBSTRESU, LB_VALUE to LBORRES, and deriving LBSTRESC and LBSTRESN;
+301        data lab2;
+302        length LBSTRESC $8  LBNRIND $20 LBCAT $50;
+303        set lab1(rename=(lb_unit=LBORRESU si_unit=LBSTRESU si_value=LBSTRESN NORL_INV=LBORNRLO NORH_INV=LBORNRHI SHIFT_L=LBSTNRLO
+303      !   SHIFT_H=LBSTNRHI));
+304        LBORRES = compress(LB_VALUE);
+305        LBSTRESC = LBORRES;
+306        LBSTRESN = input(compress(LBSTRESC,"ABCDEFGHIJKLMNOPQRSTUVWXYZ"),comma8.);
+307        RFSTDTC1= input(RFSTDTC, yymmdd10.);
+308        LBDT= input(date, date7.);
+309        
+310        format lbdt yymmdd10. RFSTDTC1 yymmdd10.;
+311        
+312        **baseline flag and derived flag;
+313        drop Age race arm armcd BRTHDTC sex AGEU country RFSTDTC date LB_VALUE;
+314        if lbtestcd in('ALP', 'ALT', 'AST', 'BILDIR', 'BILI', 'HCT', 'HGB') then lbtestcd= "T"||lbtestcd;
+315        if substr(lbtestcd,1,1)= 'T' then LBDRVFL= 'Y';
+7                                                          The SAS System                      Monday, February 12, 2024 12:40:55 PM
+
+316        if lbdt ne . and RFSTDTC1 ne .  and LBORRES ne " " and RFSTDTC1>= lbdt then LBBLFL = "Y";
+317        
+318        
+319        
+320        ***deriving the variable lbcat from labt_ using substr;
+321        if labt_ = "02CLINICAL CHEMISTRY" then
+322        LBCAT = "CHEMISTRY";
+323        else if labt_ = "03URINE" then
+324        LBCAT = "URINALYSIS";
+325        else if labt_ = "01HEMATOLOGY" then
+326        LBCAT = "HEMATOLOGY";
+327        
+328        **variable LBNRIND;
+329        if lbcat not in("URINALYSIS") and lborres not
+330        in(" ") then do;
+331        If .<lbstresn<lbstnrlo then LBNRIND='LOW';
+332        else if lbstnrlo<=lbstresn<=lbstnrhi then
+333        LBNRIND='Normal';
+334        else if lbstresn>lbstnrhi then LBNRIND='HIGH';
+335        End;
+336        Else if lbcat not in
+337        ("HEMATOLOGY", "CHEMISTRY") and lborres
+338        not in (" ") then do;
+339        If flag in ("H") then LBNRIND="HIGH";
+340        else If flag in ("L") then LBNRIND="LOW";
+341        else If flag in (" ") then LBNRIND="NORMAL";
+342        End;
+343        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB1.
+NOTE: The data set WORK.LAB2 has 102412 observations and 33 variables.
+NOTE: Compressing data set WORK.LAB2 decreased size by 61.10 percent. 
+      Compressed is 212 pages; un-compressed would require 545 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.29 seconds
+      user cpu time       0.27 seconds
+      system cpu time     0.03 seconds
+      memory              4411.87k
+      OS Memory           29096.00k
+      Timestamp           02/12/2024 11:40:55 AM
+      Step Count                        86  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     792
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           54280
+      
+
+344        
+345        proc sort data=lab2 out=lab2a;
+346        by subjid lbtestcd lbdt visitd;
+347        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB2.
+NOTE: The data set WORK.LAB2A has 102412 observations and 33 variables.
+NOTE: Compressing data set WORK.LAB2A decreased size by 61.10 percent. 
+8                                                          The SAS System                      Monday, February 12, 2024 12:40:55 PM
+
+      Compressed is 212 pages; un-compressed would require 545 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.27 seconds
+      user cpu time       0.21 seconds
+      system cpu time     0.06 seconds
+      memory              80975.12k
+      OS Memory           104108.00k
+      Timestamp           02/12/2024 11:40:55 AM
+      Step Count                        87  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     19756
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           54288
+      
+
+348        
+349        data lab2b;
+350        set lab2a;
+351        by subjid lbtestcd lbdt visitd;
+352        *by descending usubjid lbdt;
+353        if first.subjid or first.lbtestcd then VISITNUM=.;
+354        VISITNUM+1;
+355        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB2A.
+NOTE: The data set WORK.LAB2B has 102412 observations and 34 variables.
+NOTE: Compressing data set WORK.LAB2B decreased size by 60.98 percent. 
+      Compressed is 215 pages; un-compressed would require 551 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.22 seconds
+      user cpu time       0.20 seconds
+      system cpu time     0.02 seconds
+      memory              4419.59k
+      OS Memory           29096.00k
+      Timestamp           02/12/2024 11:40:56 AM
+      Step Count                        88  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     744
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           55048
+      
+
+356        
+357        ***proc format for visitd;
+358        proc format;
+359        value $visitfmt
+360        "SCREENING_R.1" ="SCREENING (DAY -28 TO DAY -1): UNSCHEDULED 1"
+361        "SCREENING_R.2" ="SCREENING (DAY -28 TO DAY -1): UNSCHEDULED 2"
+362        "WEEK 2" ="VISIT 2 (WEEK 2)"
+363        "MONTH 1" = "VISIT 2 (MONTH 1)"
+364        "MONTH 2" = "VISIT 2 (MONTH 2)"
+365        "MONTH 3" = "VISIT 2 (MONTH 3)"
+9                                                          The SAS System                      Monday, February 12, 2024 12:40:56 PM
+
+366        "MONTH 4" = "VISIT 2 (MONTH 4)"
+367        "MONTH 5" = "VISIT 2 (MONTH 5)"
+368        "MONTH 6" = "VISIT 2 (MONTH 6)"
+369        "MONTH 7" = "VISIT 2 (MONTH 7)"
+370        "MONTH 8" = "VISIT 2 (MONTH 8)"
+371        "MONTH 9" = "VISIT 2 (MONTH 9)"
+372        "MONTH 10" = "VISIT 2 (MONTH 10)"
+373        "MONTH 11" = "VISIT 2 (MONTH 11)"
+374        "MONTH 12" = "VISIT 2 (MONTH 12)"
+375        "MONTH 13" = "VISIT 2 (MONTH 13)"
+376        "MONTH 14" = "VISIT 2 (MONTH 14)"
+377        "MONTH 15" = "VISIT 2 (MONTH 15)"
+378        "MONTH 16" = "VISIT 2 (MONTH 16)"
+379        "MONTH 17" = "VISIT 2 (MONTH 17)"
+380        "MONTH 18" = "VISIT 2 (MONTH 18)"
+381        "MONTH 19" = "VISIT 2 (MONTH 19)"
+382        "MONTH 20" = "VISIT 2 (MONTH 20)"
+383        "MONTH 21" = "VISIT 2 (MONTH 21)"
+384        "MONTH 22" = "VISIT 2 (MONTH 22)"
+385        "MONTH 23" = "VISIT 2 (MONTH 23)"
+386        "MONTH 24" = "VISIT 2 (MONTH 24)"
+387        "MONTH 25" = "VISIT 2 (MONTH 25)"
+388        "MONTH 26" = "VISIT 2 (MONTH 26)"
+389        "MONTH 27" = "VISIT 2 (MONTH 27)"
+390        "MONTH 28" = "VISIT 2 (MONTH 28)"
+391        "MONTH 29" = "VISIT 2 (MONTH 29)"
+392        "MONTH 30" = "VISIT 2 (MONTH 30)"
+393        "MONTH 31" = "VISIT 2 (MONTH 31)"
+394        "MONTH 32" = "VISIT 2 (MONTH 32)"
+395        "MONTH 33" = "VISIT 2 (MONTH 33)"
+396        "MONTH 34" = "VISIT 2 (MONTH 34)"
+397        "MONTH 35" = "VISIT 2 (MONTH 35)"
+398        "MONTH 36" = "VISIT 2 (MONTH 36)"
+399        "MONTH 37" = "VISIT 2 (MONTH 37)"
+400        "MONTH 38" = "VISIT 2 (MONTH 38)"
+401        "MONTH 39" = "VISIT 2 (MONTH 39)"
+402        "MONTH 40" = "VISIT 2 (MONTH 40)"
+403        "MONTH 41" = "VISIT 2 (MONTH 41)"
+404        "MONTH 42" = "VISIT 2 (MONTH 42)"
+405        "MONTH 43" = "VISIT 2 (MONTH 43)"
+406        "MONTH 1_R.1" = "VISIT 2 (MONTH 1)UNSCHEDULED 1"
+407        "MONTH 2_R.1" = "VISIT 2 (MONTH 2) UNSCHEDULED 2"
+408        "MONTH 3_R.1" = "VISIT 2 (MONTH 3) UNSCHEDULED 3"
+409        "MONTH 4_R.1" = "VISIT 2 (MONTH 4) UNSCHEDULED 4"
+410        "MONTH 5_R.1" = "VISIT 2 (MONTH 5) UNSCHEDULED 5"
+411        "MONTH 6_R.1" = "VISIT 2 (MONTH 6)UNSCHEDULED 6"
+412        "MONTH 7_R.1" = "VISIT 2 (MONTH 7)UNSCHEDULED 7"
+413        "MONTH 8_R.1" = "VISIT 2 (MONTH 8)UNSCHEDULED 8"
+414        "MONTH 9_R.1" = "VISIT 2 (MONTH 9)UNSCHEDULED 9"
+415        "MONTH 10_R.1" = "VISIT 2 (MONTH 10)UNSCHEDULED 10"
+416        "MONTH 11_R.1" = "VISIT 2 (MONTH 11)UNSCHEDULED 11"
+417        "MONTH 12_R.1" = "VISIT 2 (MONTH 12)UNSCHEDULED 12"
+418        "MONTH 13_R.1" = "VISIT 2 (MONTH 13)UNSCHEDULED 13"
+419        "MONTH 14_R.1" = "VISIT 2 (MONTH 14)UNSCHEDULED 14"
+420        "MONTH 15_R.1" = "VISIT 2 (MONTH 15)UNSCHEDULED 15"
+421        "MONTH 16_R.1" = "VISIT 2 (MONTH 16)UNSCHEDULED 16"
+422        "MONTH 17_R.1" = "VISIT 2 (MONTH 17)UNSCHEDULED 17"
+423        "MONTH 18_R.1" = "VISIT 2 (MONTH 18)UNSCHEDULED 18"
+10                                                         The SAS System                      Monday, February 12, 2024 12:40:56 PM
+
+424        "MONTH 19_R.1" = "VISIT 2 (MONTH 19)UNSCHEDULED 19"
+425        "MONTH 20_R.1" = "VISIT 2 (MONTH 20)UNSCHEDULED 20"
+426        "MONTH 21_R.1" = "VISIT 2 (MONTH 21)UNSCHEDULED 21"
+427        "MONTH 22_R.1" = "VISIT 2 (MONTH 22)UNSCHEDULED 22"
+428        "MONTH 23_R.1" = "VISIT 2 (MONTH 23)UNSCHEDULED 23"
+429        "MONTH 24_R.1" = "VISIT 2 (MONTH 24)UNSCHEDULED 24"
+430        "MONTH 25_R.1" = "VISIT 2 (MONTH 25)UNSCHEDULED 25"
+431        "MONTH 26_R.1" = "VISIT 2 (MONTH 26)UNSCHEDULED 26"
+432        "MONTH 27_R.1" = "VISIT 2 (MONTH 27)UNSCHEDULED 27"
+433        "MONTH 28_R.1" = "VISIT 2 (MONTH 28)UNSCHEDULED 28"
+434        "MONTH 29_R.1" = "VISIT 2 (MONTH 29)UNSCHEDULED 29"
+435        "MONTH 30_R.1" = "VISIT 2 (MONTH 30)UNSCHEDULED 30"
+436        "MONTH 31_R.1" = "VISIT 2 (MONTH 1)UNSCHEDULED 31"
+437        "MONTH 32_R.1" = "VISIT 2 (MONTH 1)UNSCHEDULED 32"
+438        "MONTH 33_R.1" = "VISIT 2 (MONTH 1)UNSCHEDULED 33"
+439        "MONTH 34_R.1" = "VISIT 2 (MONTH 1) UNSCHEDULED 34"
+440        "MONTH 35_R.1" = "VISIT 2 (MONTH 35)UNSCHEDULED 35"
+441        "MONTH 36_R.1" = "VISIT 2 (MONTH 36) UNSCHEDULED 36"
+442        "MONTH 40_R.1" = "VISIT 2 (MONTH 40)UNSCHEDULED 40"
+443        "END OF TREAT_R.1" = "END OF TREAT (DAY -28 TO DAY -1): UNSCHEDULED 1"
+444        "END OF TREAT_R.2" = "END OF TREAT (DAY -28 TO DAY -1): UNSCHEDULED 2"
+445        "EVENT_R.1" = "EVENT (DAY -28 TO DAY -1): UNSCHEDULED 1"
+446        "EVENT_R.2" = "EVENT (DAY -28 TO DAY -1): UNSCHEDULED 2"
+447        "FOLLOW UP_R.1" = "FOLLOW UP_R.1 (DAY -28 TO DAY -1): UNSCHEDULED 1"
+448        "FOLLOW UP_R.2" = "FOLLOW UP_R.2 (DAY -28 TO DAY -1): UNSCHEDULED 2"
+449        "Local Lab - Page 001a" = "Local Lab (DAY -28 TO DAY -1): UNSCHEDULED 1a"
+450        "Local Lab - Page 001b" = "Local Lab (DAY -28 TO DAY -1): UNSCHEDULED 1b"
+451        "Local Lab - Page 001c" = "Local Lab  (DAY -28 TO DAY -1): UNSCHEDULED 1c"
+452        "RETEST 1" = "VISIT 2 (RETEST 1)"
+453        "RETEST 2" = "VISIT 2 (RETEST 2)"
+454        "RETEST 3" = "VISIT 2 (RETEST 3)"
+455        "RETEST 4" = "VISIT 2 (RETEST 4)"
+456        "RETEST 5" = "VISIT 2 (RETEST 5)"
+457        "RETEST 6" = "VISIT 2 (RETEST 6)"
+458        "RETEST 7" = "VISIT 2 (RETEST 7)"
+459        "RETEST 8" = "VISIT 2 (RETEST 8)"
+460        "RETEST 9" = "VISIT 2 (RETEST 9)"
+461        "RETEST 10" = "VISIT 2 (RETEST 10)"
+462        "RETEST 11" = "VISIT 2 (RETEST 11)"
+463        "RETEST 12" = "VISIT 2 (RETEST 12)"
+464        "RETEST 13" = "VISIT 2 (RETEST 13)"
+465        "RETEST 14" = "VISIT 2 (RETEST 14)"
+466        "RETEST 15" = "VISIT 2 (RETEST 15)"
+467        "RETEST 1_R.1" = "VISIT 2 (RETEST 1)UNSCHEDULED 1"
+468        "RETEST 2_R.1" = "VISIT 2 (RETEST 2) UNSCHEDULED 2"
+469        "RETEST 3_R.1" = "VISIT 2 (RETEST 3) UNSCHEDULED 3"
+470        "RETEST 5_R.1" = "VISIT 2 (RETEST 5) UNSCHEDULED 5"
+471        "RETEST 6_R.1" = "VISIT 2 (RETEST 6)UNSCHEDULED 6"
+472        "RETEST 7_R.1" = "VISIT 2 (RETEST 7)UNSCHEDULED 7"
+473        "RETEST 8_R.1" = "VISIT 2 (RETEST 8)UNSCHEDULED 8"
+474        "RETEST 9_R.1" = "VISIT 2 (RETEST 9)UNSCHEDULED 9"
+475        "RETEST 10_R.1" = "VISIT 2 (RETEST 10)UNSCHEDULED 10"
+476        "RETEST 11_R.1" = "VISIT 2 (RETEST 11)UNSCHEDULED 11"
+477        "RETEST 12_R.1" = "VISIT 2 (RETEST 12)UNSCHEDULED 12"
+478        "RETEST 13_R.1" = "VISIT 2 (RETEST 13)UNSCHEDULED 13"
+479        "RETEST  14_R.1" = "VISIT 2 (RETEST 14)UNSCHEDULED 14"
+480        "RETEST 15_R.1" = "VISIT 2 (RETEST 15)UNSCHEDULED 15"
+481        "RETEST 16_R.1" = "VISIT 2 (RETEST 15)UNSCHEDULED 16";
+11                                                         The SAS System                      Monday, February 12, 2024 12:40:56 PM
+
+NOTE: Format $VISITFMT is already on the library WORK.FORMATS.
+NOTE: Format $VISITFMT has been output.
+482        run;
+
+NOTE: PROCEDURE FORMAT used (Total process time):
+      real time           0.00 seconds
+      user cpu time       0.01 seconds
+      system cpu time     0.00 seconds
+      memory              156.71k
+      OS Memory           24736.00k
+      Timestamp           02/12/2024 11:40:56 AM
+      Step Count                        89  Switch Count  0
+      Page Faults                       0
+      Page Reclaims                     15
+      Page Swaps                        0
+      Voluntary Context Switches        1
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           96
+      
+
+483        
+484        
+485        ***sorting to create uniqness;
+486        proc sort data = lab2b out=lab2b1;
+487        by usubjid lbtestcd lbdt visitd;
+488        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB2B.
+NOTE: The data set WORK.LAB2B1 has 102412 observations and 34 variables.
+NOTE: Compressing data set WORK.LAB2B1 decreased size by 60.98 percent. 
+      Compressed is 215 pages; un-compressed would require 551 pages.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.29 seconds
+      user cpu time       0.21 seconds
+      system cpu time     0.09 seconds
+      memory              101381.71k
+      OS Memory           124288.00k
+      Timestamp           02/12/2024 11:40:56 AM
+      Step Count                        90  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     24667
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           55056
+      
+
+489        
+490        ***lbseq and lbdy;
+491        data lab4a(DROP=DMDY DMDTC RFENDTC TRTEM28 FLAG TRTEM1 SUBJID LAB_TDAY PAR_ LABT_ VTYPE);
+492        length VISITD $100;
+493        set lab2b1(rename=(RFSTDTC1=RFSTDTC));
+494        format VISITD $visitfmt.;
+495        if LBDT >= RFSTDTC then LBDY =
+496        (LBDT-RFSTDTC)+1;
+497        else if LBDT<RFSTDTC then LBDY = LBDT-RFSTDTC;
+12                                                         The SAS System                      Monday, February 12, 2024 12:40:56 PM
+
+498        by usubjid lbtestcd lbdt visitd;
+499        *by descending usubjid lbdt;
+500        if first.usubjid then LBSEQ=.;
+501        LBSEQ+1;
+502        run;
+
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      11 at 496:6   
+NOTE: There were 102412 observations read from the data set WORK.LAB2B1.
+NOTE: The data set WORK.LAB4A has 102412 observations and 25 variables.
+NOTE: Compressing data set WORK.LAB4A decreased size by 68.43 percent. 
+      Compressed is 155 pages; un-compressed would require 491 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.20 seconds
+      user cpu time       0.19 seconds
+      system cpu time     0.01 seconds
+      memory              4428.84k
+      OS Memory           29096.00k
+      Timestamp           02/12/2024 11:40:56 AM
+      Step Count                        91  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     748
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      0
+      Block Input Operations            0
+      Block Output Operations           39696
+      
+
+503        
+504        
+505        ***label names for the variables;
+506        data lb(drop=LBDT RFSTDTC);
+507        retain STUDYID DOMAIN USUBJID LBSEQ LBTESTCD LBTEST LBCAT LBORRES LBORRESU
+508        LBORNRLO LBORNRHI LBSTRESC LBSTRESN LBSTRESU LBSTNRLO LBSTNRHI LBNRIND LBNAM LBBLFL
+509        LBDRVFL VISITNUM VISIT LBDTC LBDY;
+510        set lab4a(rename=(visitd=VISIT));
+511        label LBDTC = "Date/Time of SpecimenCollection"
+512        VISIT = "Visit Name"
+513        LBCAT = "Category for Lab Test"
+514        LBORRES = "Result or Finding in Original Units"
+515        LBORRESU = "Original Units"
+516        LBORNRLO = "Reference Range Lower Limit in Orig Unit"
+517        LBORNRHI= "Reference Range Upper Limit in Orig Unit"
+518        LBSTRESC = "Character Result/Finding in Std Format"
+519        LBSTRESN = "Numeric Result/Finding in Standard Units"
+520        LBSTRESU= "Standard Units"
+521        LBSTNRLO = "Reference Range Lower Limit-Std Units"
+522        LBSTNRHI ="Reference Range Upper Limit-Std Units"
+523        LBNRIND = "Reference Range Indicator"
+524        LBBLFL = "Baseline Flag"
+525        LBDRVFL = "Derived Flag"
+526        VISITNUM = "Visit Number"
+527        LBDY = "Study Day of Specimen Collection"
+528        DOMAIN = "Domain Abbreviation"
+529        LBTEST = "Lab Test or Examination Name"
+530        LBTESTCD = "Lab Test or Examination Short Name"
+13                                                         The SAS System                      Monday, February 12, 2024 12:40:56 PM
+
+531        LBSEQ = "Sequence Number";
+532        LBDTC = put(LBDT, yymmdd10.);
+533        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LAB4A.
+NOTE: The data set WORK.LB has 102412 observations and 24 variables.
+NOTE: Compressing data set WORK.LB decreased size by 68.18 percent. 
+      Compressed is 154 pages; un-compressed would require 484 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.18 seconds
+      user cpu time       0.16 seconds
+      system cpu time     0.03 seconds
+      memory              4340.18k
+      OS Memory           29096.00k
+      Timestamp           02/12/2024 11:40:56 AM
+      Step Count                        92  Switch Count  2
+      Page Faults                       0
+      Page Reclaims                     742
+      Page Swaps                        0
+      Voluntary Context Switches        11
+      Involuntary Context Switches      1
+      Block Input Operations            0
+      Block Output Operations           39432
+      
+
+534        
+535        **sasdataset;
+536        data anadata.LB;
+537        set lb;
+538        run;
+
+NOTE: There were 102412 observations read from the data set WORK.LB.
+NOTE: The data set ANADATA.LB has 102412 observations and 24 variables.
+NOTE: Compressing data set ANADATA.LB decreased size by 68.18 percent. 
+      Compressed is 154 pages; un-compressed would require 484 pages.
+NOTE: DATA statement used (Total process time):
+      real time           0.21 seconds
+      user cpu time       0.15 seconds
+      system cpu time     0.02 seconds
+      memory              4341.18k
+      OS Memory           29096.00k
+      Timestamp           02/12/2024 11:40:56 AM
+      Step Count                        93  Switch Count  1
+      Page Faults                       0
+      Page Reclaims                     742
+      Page Swaps                        0
+      Voluntary Context Switches        569
+      Involuntary Context Switches      0
+      Block Input Operations            32
+      Block Output Operations           39440
+      
+
+539        proc printto;
+540        run;
+
