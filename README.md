@@ -39,4 +39,4 @@
 - [initial](https://github.com/princeadeyemoboy/02.SDTM-Dataset-Development-Laboratory-/blob/main/initial.sas)
 - [Program](https://github.com/princeadeyemoboy/02.SDTM-Dataset-Development-Laboratory-/blob/main/LB.sas)
 - [Dataset](https://github.com/princeadeyemoboy/02.SDTM-Dataset-Development-Laboratory-/blob/main/lb.sas7bdat)
-- [Log]()
+- [Log](https://github.com/princeadeyemoboy/02.SDTM-Dataset-Development-Laboratory-/blob/main/lb.log)
